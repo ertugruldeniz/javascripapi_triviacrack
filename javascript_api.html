@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<title>Javascript Api Use</title>
+
+	<style type="text/css">
+
+		body{	
+         text-align: center;
+             background:#39d6ff;;
+		}
+		
+		#selAnswers div {
+			border:1px solid black;
+			padding: 10px;
+			margin:5px;
+			display:inline-block;
+		}
+
+		.cat{
+			font-size:1em;
+		}
+		.que{
+			font-size:1.5em;
+		}
+
+		#btn{
+			text-align: center;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>Javascipt Api</h1>
+
+	<div>Score: <span  id="score"></span></div>
+	<div id="output"></div>
+
+	<div id="selAnswers"></div>
+	<button  type="button" id="btn">Click For me</button>
+
+
+	<script type="text/javascript">
+		
+		let btn=document.getElementById("btn");
+
+		btn.addEventListener("click",nextItem);
+
+		let url="https://opentdb.com/api.php?amount=10"
+
+		let answers={'correct':0,'wrong':0};
+
+		let output=document.getElementById('output')
+	    
+	    let selAnswer=document.getElementById("selAnswers");
+
+		function nextItem() {
+		        selAnswers.style.background = 'white';
+				btn.style.display = 'none';
+
+				let html='<h2>Question</h2>';
+
+			    requestAJAX(url,function(data){
+					console.log(data.results[0]);
+					let obj=data.results[0];
+					html+='<div><div class="cat">' +obj.category+ '</div>';
+
+				    html+='<div class="que">' +obj.question+ '</div>'; 
+
+				    html+='</div>';
+					
+					output.innerHTML=html;
+
+					questionBuilder(obj.correct_answer,obj.incorrect_answers);
+
+			   });
+		}	
+
+
+		function correctAnswerIs(){
+
+			let els=document.querySelectorAll("#selAnswers div");
+			
+			for (let i = 0; i<els.length; i++) {
+
+				if(els[i].getAttribute('data-cor')=="true"){
+					return els[i].innerText;
+				}
+			
+			}
+
+		}
+
+
+		function sendAnswer(){
+			 btn.style.display = 'block';
+			 btn.style.margin = '0 auto';
+
+			let res=event.target.getAttribute('data-cor');
+			let correctAnswerValue=correctAnswerIs();
+
+			if(res=="true"){
+				answers.correct++;
+				selAnswers.style.background = 'green';
+				selAnswers.innerHTML="Correct: "+ correctAnswerValue;
+				selAnswers.style.marginBottom = '10px';
+				selAnswers.style.marginTop = '10px';
+
+
+			}else{
+				answers.wrong++;
+				selAnswers.style.background = 'red';
+				selAnswers.innerHTML="Wrong it was : " + correctAnswerValue;
+				selAnswers.style.marginBottom = '10px';
+				selAnswers.style.marginTop = '10px';
+
+			}
+			document.getElementById("score").innerHTML='Correct: '+answers.correct+' Wrong: '+answers.wrong;
+
+			
+		}
+
+
+		function questionBuilder(cor,incor){
+
+			let holder=incor;
+			holder.push(cor);
+			holder.sort();
+			
+			selAnswers.innerHTML="";
+
+			for(var x=0;x<holder.length;x++){
+				var el=document.createElement("div");
+				var checker=holder[x]==cor ? true:false;
+				el.setAttribute('data-cor',checker);
+				el.innerHTML=holder[x];
+				el.addEventListener("click",sendAnswer);
+				selAnswer.appendChild(el);
+			}
+		
+
+		}
+
+
+
+
+
+		function requestAJAX(url,callback) {
+				
+			let xhr=new XMLHttpRequest();
+
+			xhr.onreadystatechange=function(){
+
+					if(xhr.readyState==4&&xhr.status==200){
+
+						callback(JSON.parse(xhr.responseText))
+
+					}
+			}
+
+			xhr.open('GET',url,true);
+
+			xhr.send();
+		}
+
+	</script>
+</body>
+</html>
