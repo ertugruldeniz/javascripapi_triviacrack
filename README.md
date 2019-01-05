@@ -1,4 +1,6 @@
-# javascripapi_triviacrack
+# Triviacrack Uygulaması
+
+Uygulamayı kullanmak için https://ertugruldeniz.github.io/javascripapi_triviacrack/ adresini ziyaret ediniz.
 
 Javascript ile trivia crack apisini kullanarak soru cevap uygulaması 
 
